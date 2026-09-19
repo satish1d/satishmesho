@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meesho Admin Panel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --ink:#20232b; --muted:#737783; --line:#e8e9ee; --paper:#fff; --canvas:#f6f5f3; --pink:#9f2089; --pink-soft:#fff0fa; --green:#09885e; --orange:#ee7d2e; --shadow:0 14px 36px rgba(34,31,39,.08); }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background:var(--canvas); font:14px 'DM Sans',sans-serif; }
+    button,input,select,textarea { font:inherit; }
+    button { cursor:pointer; }
+    .shell { display:grid; grid-template-columns:245px 1fr; min-height:100vh; }
+    aside { background:#211d28; color:white; padding:24px 16px; }
+    .brand { font:700 25px 'Space Grotesk',sans-serif; margin:0 12px 38px; color:#ffb5ed; letter-spacing:-1px; }
+    .brand small { display:block; color:#aaa0af; font:500 11px 'DM Sans',sans-serif; letter-spacing:0; margin-top:4px; }
+    .nav { display:grid; gap:6px; }
+    .nav button { border:0; background:transparent; color:#bdb5c2; text-align:left; border-radius:9px; padding:12px 13px; font-weight:600; }
+    .nav button.active,.nav button:hover { color:white; background:#3d3041; }
+    .aside-note { color:#8f8791; font-size:11px; line-height:16px; margin:40px 12px 0; }
+    main { min-width:0; }
+    header { height:76px; background:var(--paper); border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; padding:0 34px; position:sticky; top:0; z-index:4; }
+    header h1 { font:700 21px 'Space Grotesk',sans-serif; margin:0; }
+    .header-actions { display:flex; gap:10px; align-items:center; }
+    .button { border:1px solid var(--line); border-radius:8px; background:white; padding:9px 13px; font-weight:700; color:var(--ink); }
+    .button.primary { color:#fff; background:var(--pink); border-color:var(--pink); }
+    .button.danger { color:#b6293e; background:#fff5f6; border-color:#ffd9df; }
+    .content { padding:30px 34px 60px; max-width:1500px; }
+    .view { display:none; } .view.active { display:block; }
+    .eyebrow { color:var(--pink); font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:1.5px; }
+    .intro { display:flex; justify-content:space-between; gap:20px; align-items:end; margin-bottom:24px; }
+    .intro h2 { margin:5px 0 0; font:700 30px 'Space Grotesk',sans-serif; letter-spacing:-1px; }
+    .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:25px; }
+    .stat,.panel { background:var(--paper); border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow); }
+    .stat { padding:18px; } .stat span { color:var(--muted); font-size:12px; } .stat strong { display:block; font:700 27px 'Space Grotesk',sans-serif; margin-top:10px; }
+    .panel { padding:20px; margin-bottom:20px; }
+    .panel-head { display:flex; justify-content:space-between; gap:12px; align-items:center; margin-bottom:15px; }
+    .panel h3 { margin:0; font:700 17px 'Space Grotesk',sans-serif; }
+    .search { width:240px; border:1px solid var(--line); border-radius:8px; padding:10px 12px; outline:none; }
+    .table-wrap { overflow:auto; } table { width:100%; border-collapse:collapse; min-width:760px; } th,td { text-align:left; padding:12px 10px; border-bottom:1px solid #f0f0f3; vertical-align:middle; } th { color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.7px; } td { font-size:13px; }
+    .product-cell { display:flex; align-items:center; gap:10px; min-width:260px; } .thumb { width:48px; height:48px; border-radius:7px; object-fit:cover; background:#eee; } .product-cell b { display:block; max-width:260px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .product-cell small { color:var(--muted); }
+    .pill { display:inline-flex; padding:4px 8px; border-radius:999px; font-size:11px; font-weight:700; background:#eef9f4; color:var(--green); } .pill.low { background:#fff4e6; color:#b96516; } .pill.off { background:#f1f1f3; color:#777; }
+    .row-actions { display:flex; gap:6px; } .icon-button { border:1px solid var(--line); background:white; border-radius:6px; padding:6px 8px; }
+    .form-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; } label { display:grid; gap:6px; color:#555965; font-weight:600; font-size:12px; } label.full { grid-column:1/-1; } input,select,textarea { width:100%; border:1px solid #dfe0e6; background:#fff; border-radius:7px; padding:10px 11px; outline:none; } textarea { min-height:82px; resize:vertical; } input:focus,select:focus,textarea:focus { border-color:var(--pink); box-shadow:0 0 0 3px var(--pink-soft); }
+    .form-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:16px; } .hidden { display:none !important; }
+    .empty { color:var(--muted); padding:28px; text-align:center; }
+    .toast { position:fixed; right:25px; bottom:25px; color:white; background:#25222b; padding:12px 16px; border-radius:8px; opacity:0; transform:translateY(8px); transition:.2s; pointer-events:none; } .toast.show { opacity:1; transform:translateY(0); }
+    .category-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; } .category-card { border:1px solid var(--line); border-radius:9px; padding:14px; background:#fff; } .category-card strong { display:block; margin-bottom:5px; } .category-card small { color:var(--muted); }
+    @media (max-width:900px) { .shell { grid-template-columns:1fr; } aside { padding:12px; position:sticky; top:0; z-index:8; } .brand { margin:4px 10px 12px; } .brand small,.aside-note { display:none; } .nav { display:flex; overflow:auto; } .nav button { white-space:nowrap; } header { padding:0 18px; } .content { padding:22px 18px 50px; } .stats { grid-template-columns:repeat(2,1fr); } }
+    @media (max-width:580px) { .intro { display:block; } .intro .button { margin-top:14px; } .form-grid { grid-template-columns:1fr; } label.full { grid-column:auto; } .category-grid { grid-template-columns:1fr 1fr; } .search { width:150px; } header h1 { font-size:17px; } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside>
+      <div class="brand">meesho <small>Commerce control room</small></div>
+      <nav class="nav">
+        <button class="active" data-view="dashboard">Overview</button>
+        <button data-view="products">Products</button>
+        <button data-view="orders">Orders</button>
+        <button data-view="categories">Categories</button>
+        <button data-view="settings">Store settings</button>
+      </nav>
+      <p class="aside-note">Changes are saved in this browser and sync live with the storefront tab.</p>
+    </aside>
+    <main>
+      <header><h1 id="page-title">Overview</h1><div class="header-actions"><a class="button" href="/" target="_blank">Open storefront</a><button class="button" id="import-btn">Import CSV</button><input id="csv-input" type="file" accept=".csv,text/csv" class="hidden"><button class="button" id="export-btn">Export data</button></div></header>
+      <div class="content">
+        <section class="view active" id="view-dashboard">
+          <div class="intro"><div><div class="eyebrow">Live operations</div><h2>Good morning, admin.</h2></div><button class="button primary" id="quick-add">+ Add product</button></div>
+          <div class="stats"><div class="stat"><span>Catalog products</span><strong id="stat-products">0</strong></div><div class="stat"><span>Orders</span><strong id="stat-orders">0</strong></div><div class="stat"><span>Revenue</span><strong id="stat-revenue">₹0</strong></div><div class="stat"><span>Low stock</span><strong id="stat-low">0</strong></div></div>
+          <div class="panel"><div class="panel-head"><h3>Recent orders</h3><button class="button" data-go="orders">View all</button></div><div class="table-wrap"><table><thead><tr><th>Order</th><th>Customer item</th><th>Total</th><th>Status</th></tr></thead><tbody id="recent-orders"></tbody></table></div></div>
+          <div class="panel"><div class="panel-head"><h3>Catalog health</h3><span class="pill">Live sync on</span></div><div id="health-list"></div></div>
+        </section>
+        <section class="view" id="view-products">
+          <div class="intro"><div><div class="eyebrow">Inventory</div><h2>Products</h2></div><button class="button primary" id="add-product">+ Add product</button></div>
+          <div class="panel hidden" id="product-form-panel"><div class="panel-head"><h3 id="form-title">Add product</h3><button class="button" id="close-form">Close</button></div><form id="product-form"><div class="form-grid"><label>Product title<input required name="title" /></label><label>Category<select required name="category" id="product-category"></select></label><label>Subcategory<input required name="subCategory" /></label><label>Supplier<input required name="supplierName" /></label><label>Selling price<input required type="number" min="0" name="price" /></label><label>Original price<input required type="number" min="0" name="originalPrice" /></label><label>Stock<input required type="number" min="0" name="stock" value="20" /></label><label>Rating<input required type="number" min="0" max="5" step="0.1" name="rating" value="4.3" /></label><label>Image URL<input required type="url" name="imageUrl" placeholder="https://..." /></label><label>Trusted<select name="isMeeshoAssured"><option value="true">Yes</option><option value="false">No</option></select></label><label class="full">Description<textarea required name="description"></textarea></label><label>Fabric<input name="fabric" value="Cotton" /></label><label>Pattern<input name="pattern" value="Printed" /></label></div><div class="form-actions"><button type="button" class="button" id="cancel-form">Cancel</button><button class="button primary">Save product</button></div></form></div>
+          <div class="panel"><div class="panel-head"><h3>All products</h3><input class="search" id="product-search" placeholder="Search products" /></div><div class="table-wrap"><table><thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Action</th></tr></thead><tbody id="products-table"></tbody></table></div></div>
+        </section>
+        <section class="view" id="view-orders"><div class="intro"><div><div class="eyebrow">Fulfilment</div><h2>Orders</h2></div></div><div class="panel"><div class="table-wrap"><table><thead><tr><th>Order</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th></tr></thead><tbody id="orders-table"></tbody></table></div></div></section>
+        <section class="view" id="view-categories"><div class="intro"><div><div class="eyebrow">Merchandising</div><h2>Categories</h2></div></div><div class="panel"><div class="category-grid" id="category-grid"></div></div></section>
+        <section class="view" id="view-settings"><div class="intro"><div><div class="eyebrow">Store controls</div><h2>Settings</h2></div></div><div class="panel"><div class="panel-head"><h3>Cashfree payment gateway</h3><span class="pill" id="cashfree-status">Checking...</span></div><p style="color:var(--muted);margin-top:0">Credentials are sent directly to the local server and are never stored in browser storage or shown again.</p><form id="cashfree-form" class="form-grid"><label>Cashfree Client ID<input required name="clientId" autocomplete="off" placeholder="Enter production client ID" /></label><label>Cashfree Secret Key<input required type="password" name="clientSecret" autocomplete="new-password" placeholder="Enter production secret key" /></label><div class="form-actions full"><button class="button primary">Save gateway credentials</button></div></form></div><div class="panel"><div class="panel-head"><h3>Promo banner</h3><span class="pill">Visible on storefront</span></div><form id="banner-form" class="form-grid"><label>Headline<input name="title" value="Maha Indian Shopping Sale" /></label><label>Deal tag<input name="discountTag" value="Starting at ₹69 Only" /></label><label class="full">Subtitle<input name="subtitle" value="Direct from Suraj & Jaipur Weavers • Up to 80% Off" /></label><div class="form-actions full"><button class="button primary">Save banner</button></div></form></div><div class="panel"><div class="panel-head"><h3>Data tools</h3></div><p style="color:var(--muted)">Resetting removes admin catalog edits and restores the original demo catalog on the next storefront load.</p><button class="button danger" id="reset-btn">Reset shared catalog</button></div></section>
+      </div>
+    </main>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script>
+    const keys = { products:'meesho_products', categories:'meesho_categories', orders:'meesho_orders', banner:'meesho_banner' };
+    let products = read(keys.products, []), categories = read(keys.categories, []), orders = read(keys.orders, []), editingId = null;
+    const $ = (selector) => document.querySelector(selector);
+    function read(key, fallback) { try { const value = JSON.parse(localStorage.getItem(key) || 'null'); return value ?? fallback; } catch { return fallback; } }
+    function save(key, value) { localStorage.setItem(key, JSON.stringify(value)); }
+    function money(value) { return '₹' + Number(value || 0).toLocaleString('en-IN'); }
+    function toast(message) { const el = $('#toast'); el.textContent = message; el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 2200); }
+    function categoryName(id) { return categories.find(category => category.id === id)?.name || id || 'Uncategorised'; }
+    function sync() { products = read(keys.products, products); categories = read(keys.categories, categories); orders = read(keys.orders, orders); renderAll(); }
+    function renderAll() { renderStats(); renderProducts(); renderOrders(); renderRecentOrders(); renderCategories(); fillCategoryOptions(); renderHealth(); }
+    function renderStats() { $('#stat-products').textContent = products.length; $('#stat-orders').textContent = orders.length; $('#stat-revenue').textContent = money(orders.reduce((sum, order) => sum + Number(order.total || 0), 0)); $('#stat-low').textContent = products.filter(product => Number(product.stock ?? 20) < 5).length; }
+    function renderProducts() { const query = ($('#product-search')?.value || '').toLowerCase(); const rows = products.filter(product => (product.title + product.category + product.supplierName).toLowerCase().includes(query)).map(product => { const stock = Number(product.stock ?? 20); return `<tr><td><div class="product-cell"><img class="thumb" src="${product.imageUrl}" alt=""><div><b>${escapeHtml(product.title)}</b><small>${escapeHtml(product.supplierName || '')}</small></div></div></td><td>${escapeHtml(categoryName(product.category))}</td><td><b>${money(product.price)}</b><br><small style="text-decoration:line-through;color:var(--muted)">${money(product.originalPrice)}</small></td><td><span class="pill ${stock === 0 ? 'off' : stock < 5 ? 'low' : ''}">${stock === 0 ? 'Out of stock' : stock + ' units'}</span></td><td><div class="row-actions"><button class="icon-button" data-edit="${product.id}">Edit</button><button class="icon-button" data-delete="${product.id}">Delete</button></div></td></tr>`; }).join(''); $('#products-table').innerHTML = rows || '<tr><td colspan="5" class="empty">No products found.</td></tr>'; }
+    function renderOrders() { const rows = orders.map(order => `<tr><td><b>${escapeHtml(order.orderId)}</b><br><small>${escapeHtml(order.date || '')}</small></td><td>${(order.items || []).map(item => escapeHtml(item.title)).join(', ')}</td><td><b>${money(order.total)}</b></td><td>${escapeHtml(order.paymentMethod || 'Prepaid')}</td><td><select data-order="${order.orderId}"><option ${order.status === 'Confirmed (Prepaid)' ? 'selected' : ''}>Confirmed (Prepaid)</option><option ${order.status === 'Shipped' ? 'selected' : ''}>Shipped</option><option ${order.status === 'Delivered' ? 'selected' : ''}>Delivered</option><option ${order.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option></select></td></tr>`).join(''); $('#orders-table').innerHTML = rows || '<tr><td colspan="5" class="empty">No orders yet.</td></tr>'; }
+    function renderRecentOrders() { $('#recent-orders').innerHTML = orders.slice(0, 5).map(order => `<tr><td><b>${escapeHtml(order.orderId)}</b></td><td>${escapeHtml(order.items?.[0]?.title || 'Order')}</td><td>${money(order.total)}</td><td><span class="pill">${escapeHtml(order.status || 'Placed')}</span></td></tr>`).join('') || '<tr><td colspan="4" class="empty">No orders yet.</td></tr>'; }
+    function renderCategories() { $('#category-grid').innerHTML = categories.map(category => `<div class="category-card"><strong>${category.icon || '•'} ${escapeHtml(category.name)}</strong><small>${(category.subs || []).length} subcategories · From ${money(category.startingPrice)}</small></div>`).join('') || '<div class="empty">No categories.</div>'; }
+    function renderHealth() { const noImages = products.filter(product => !product.imageUrl).length; $('#health-list').innerHTML = `<p><span class="pill">${products.length} products active</span> &nbsp; ${noImages ? '<span class="pill low">' + noImages + ' missing images</span>' : 'All products have image URLs.'}</p><p style="color:var(--muted);margin-bottom:0">Orders and catalog updates are stored locally and sync to other open tabs immediately.</p>`; }
+    function fillCategoryOptions() { $('#product-category').innerHTML = categories.map(category => `<option value="${category.id}">${escapeHtml(category.name)}</option>`).join(''); }
+    function escapeHtml(value) { return String(value ?? '').replace(/[&<>'"]/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[character])); }
+    function parseCsv(text) {
+      const rows = [];
+      let row = [], cell = '', quoted = false;
+      for (let index = 0; index < text.length; index += 1) {
+        const character = text[index];
+        const next = text[index + 1];
+        if (character === '"' && quoted && next === '"') { cell += '"'; index += 1; continue; }
+        if (character === '"') { quoted = !quoted; continue; }
+        if (character === ',' && !quoted) { row.push(cell); cell = ''; continue; }
+        if ((character === '\n' || character === '\r') && !quoted) {
+          if (character === '\r' && next === '\n') index += 1;
+          row.push(cell); cell = '';
+          if (row.some(value => value.trim())) rows.push(row);
+          row = [];
+          continue;
+        }
+        cell += character;
+      }
+      if (cell || row.length) { row.push(cell); if (row.some(value => value.trim())) rows.push(row); }
+      return rows;
+    }
+    function importProductsFromCsv(text) {
+      const rows = parseCsv(text);
+      const headers = rows.shift().map(header => header.trim());
+      const index = Object.fromEntries(headers.map((header, position) => [header, position]));
+      const imported = [];
+      let current = null;
+      rows.forEach(row => {
+        const title = (row[index['Title']] || '').trim();
+        const image = (row[index['Image Src']] || '').trim();
+        const size = (row[index['Option1 Value']] || '').trim();
+        if (title) {
+          current = {
+            id: (row[index['Variant SKU']] || 'import-' + Date.now() + '-' + imported.length).trim(),
+            title,
+            category: 'ethnic',
+            subCategory: 'Kurtis',
+            price: Number(row[index['Variant Price']] || 0),
+            originalPrice: Number(row[index['Variant Compare At Price']] || row[index['Variant Price']] || 0),
+            rating: 4.3,
+            reviewCount: 0,
+            supplierName: (row[index.Vendor] || 'VAREYAA').trim(),
+            description: (row[index['Body (HTML)']] || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim(),
+            fabric: 'Breathable ethnic fabric',
+            pattern: 'Printed / Embroidered',
+            isMeeshoAssured: true,
+            stock: 20,
+            sizes: [],
+            imageUrls: []
+          };
+          imported.push(current);
+        }
+        if (!current) return;
+        if (size && !current.sizes.includes(size)) current.sizes.push(size);
+        if (image && !current.imageUrls.includes(image)) current.imageUrls.push(image);
+        if (!current.imageUrl && image) current.imageUrl = image;
+      });
+      return imported.filter(product => product.title && product.imageUrl);
+    }
+    function showView(name) { document.querySelectorAll('.view').forEach(view => view.classList.toggle('active', view.id === 'view-' + name)); document.querySelectorAll('.nav button').forEach(button => button.classList.toggle('active', button.dataset.view === name)); $('#page-title').textContent = name[0].toUpperCase() + name.slice(1); if (name === 'products') renderProducts(); }
+    function openForm(product) { editingId = product?.id || null; $('#product-form-panel').classList.remove('hidden'); $('#form-title').textContent = editingId ? 'Edit product' : 'Add product'; const form = $('#product-form'); form.reset(); if (product) Object.keys(product).forEach(key => { if (form.elements[key]) form.elements[key].value = product[key]; }); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    function closeForm() { editingId = null; $('#product-form-panel').classList.add('hidden'); }
+    function injectPixelSettings() { const cashfreeForm = $('#cashfree-form'); if (!cashfreeForm || $('#pixel-form')) return; const panel = document.createElement('div'); panel.className = 'panel'; panel.innerHTML = '<div class="panel-head"><h3>Facebook Pixel</h3><span class="pill" id="pixel-status">Checking...</span></div><p style="color:var(--muted);margin-top:0">Save the Pixel ID here. It will load across storefront pages and track standard shopping events.</p><form id="pixel-form" class="form-grid"><label>Facebook Pixel ID<input required name="pixelId" inputmode="numeric" pattern="[0-9]+" autocomplete="off" placeholder="Enter numeric Pixel ID" /></label><div class="form-actions"><button class="button primary">Save Pixel</button></div></form>'; cashfreeForm.closest('.panel').before(panel); }
+    async function loadPixelStatus() { try { const response = await fetch('/api/admin/facebook-pixel'); const data = await response.json(); $('#pixel-status').textContent = data.configured ? 'Configured' : 'Not configured'; $('#pixel-status').classList.toggle('low', !data.configured); } catch { $('#pixel-status').textContent = 'Server unavailable'; } }
+    function setupPixelForm() { injectPixelSettings(); $('#pixel-form').onsubmit = async (event) => { event.preventDefault(); const data = Object.fromEntries(new FormData(event.target)); const response = await fetch('/api/admin/facebook-pixel', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) }); const result = await response.json(); if (!response.ok) { toast(result.error || 'Could not save Pixel ID'); return; } event.target.reset(); $('#pixel-status').textContent = result.configured ? 'Configured' : 'Disabled'; $('#pixel-status').classList.toggle('low', !result.configured); toast('Facebook Pixel saved on server'); }; loadPixelStatus(); }
+    document.querySelectorAll('.nav button').forEach(button => button.addEventListener('click', () => showView(button.dataset.view)));
+    document.querySelectorAll('[data-go]').forEach(button => button.addEventListener('click', () => showView(button.dataset.go)));
+    $('#quick-add').onclick = $('#add-product').onclick = () => openForm(); $('#close-form').onclick = $('#cancel-form').onclick = closeForm; $('#product-search').oninput = renderProducts;
+    $('#product-form').onsubmit = (event) => { event.preventDefault(); const data = Object.fromEntries(new FormData(event.target)); const product = { ...data, id: editingId || 'admin-' + Date.now(), price:Number(data.price), originalPrice:Number(data.originalPrice), stock:Number(data.stock), rating:Number(data.rating), reviewCount:0, isMeeshoAssured:data.isMeeshoAssured === 'true', description:data.description, fabric:data.fabric || 'Cotton', pattern:data.pattern || 'Printed' }; products = editingId ? products.map(item => item.id === editingId ? { ...item, ...product } : item) : [product, ...products]; save(keys.products, products); closeForm(); renderAll(); toast(editingId ? 'Product updated live' : 'Product added live'); };
+    $('#products-table').onclick = (event) => { const edit = event.target.closest('[data-edit]'), remove = event.target.closest('[data-delete]'); if (edit) openForm(products.find(product => product.id === edit.dataset.edit)); if (remove && confirm('Delete this product?')) { products = products.filter(product => product.id !== remove.dataset.delete); save(keys.products, products); renderAll(); toast('Product removed'); } };
+    $('#orders-table').onchange = (event) => { const id = event.target.dataset.order; if (!id) return; orders = orders.map(order => order.orderId === id ? { ...order, status:event.target.value } : order); save(keys.orders, orders); renderAll(); toast('Order status updated'); };
+    $('#banner-form').onsubmit = (event) => { event.preventDefault(); save(keys.banner, Object.fromEntries(new FormData(event.target))); toast('Banner settings saved'); };
+    async function loadCashfreeStatus() { try { const response = await fetch('/api/admin/cashfree-config'); const data = await response.json(); $('#cashfree-status').textContent = data.configured ? 'Configured' : 'Not configured'; $('#cashfree-status').classList.toggle('low', !data.configured); } catch { $('#cashfree-status').textContent = 'Server unavailable'; } }
+    $('#cashfree-form').onsubmit = async (event) => { event.preventDefault(); const data = Object.fromEntries(new FormData(event.target)); const response = await fetch('/api/admin/cashfree-config', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) }); const result = await response.json(); if (!response.ok) { toast(result.error || 'Could not save gateway credentials'); return; } event.target.reset(); $('#cashfree-status').textContent = 'Configured'; $('#cashfree-status').classList.remove('low'); toast('Cashfree credentials saved on server'); };
+    $('#export-btn').onclick = () => { const blob = new Blob([JSON.stringify({ products, categories, orders }, null, 2)], { type:'application/json' }); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'meesho-admin-export.json'; link.click(); URL.revokeObjectURL(link.href); };
+    $('#import-btn').onclick = () => $('#csv-input').click();
+    $('#csv-input').onchange = async (event) => { const file = event.target.files[0]; if (!file) return; const imported = importProductsFromCsv(await file.text()); if (!imported.length) { toast('No valid products found in CSV'); return; } if (!confirm(`Replace old catalog with ${imported.length} imported products?`)) return; products = imported; save(keys.products, products); renderAll(); toast(`${imported.length} products imported live`); event.target.value = ''; };
+    $('#reset-btn').onclick = () => { if (!confirm('Reset the shared catalog to the original demo data? Open storefront will reload.')) return; localStorage.removeItem(keys.products); localStorage.removeItem(keys.categories); toast('Catalog keys cleared. Reload storefront once to reseed.'); };
+    window.addEventListener('storage', sync); setupPixelForm(); loadCashfreeStatus(); sync();
+  </script>
+</body>
+</html>

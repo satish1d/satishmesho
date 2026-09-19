@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Wallet">
+  <rect width="512" height="512" fill="#f7f7f7"/>
+  <g fill="none" stroke="#000" stroke-width="28" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M78 182h285c48 0 88 39 88 88v42H208c-28 0-50-22-50-50s22-50 50-50h243"/>
+    <path d="M78 182 42 122h92l80 60"/>
+    <path d="M76 182v184h296c43 0 79-35 79-79v-75"/>
+    <circle cx="383" cy="259" r="13" fill="#000"/>
+    <circle cx="123" cy="406" r="28"/>
+    <circle cx="369" cy="406" r="28"/>
+  </g>
+</svg>
